@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+#include "genetic.h"
 
 #define MAX_LINE_LEN 500
-#define NUM_CITIES 37
+#define NUM_CITIES 38
 #define MAX_LEN_NAME 20
 
 void getNames(char *line,  char names[][MAX_LEN_NAME]);
@@ -19,6 +20,7 @@ int findIndexOfChar(char* s, char c, int n){
 }
 
 int main(){
+	srand(7);
 	int costTable[NUM_CITIES][NUM_CITIES] = {0};
 	char names [NUM_CITIES][MAX_LEN_NAME];
 	char line[MAX_LINE_LEN];
@@ -43,6 +45,13 @@ int main(){
 	for(i=0; i<NUM_CITIES; i++){
 		printf("%d\n", costTable[36][i]);
 	}
+	int *v1 = randomIndividual();
+	printIndividual(v1);
+	int *v2 = randomIndividual();
+	printIndividual(v2);
+
+	int *vc = crossover_PB(v1,v2);
+	printIndividual(vc);
 	
 	return 0;
 }

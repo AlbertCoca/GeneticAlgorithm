@@ -20,7 +20,7 @@ int findIndexOfChar(char* s, char c, int n){
 }
 
 int main(){
-	srand(7);
+	srand(13);
 	int costTable[NUM_CITIES][NUM_CITIES] = {0};
 	char names [NUM_CITIES][MAX_LEN_NAME];
 	char line[MAX_LINE_LEN];
@@ -46,11 +46,13 @@ int main(){
 		printf("%d\n", costTable[36][i]);
 	}
 	int *v1 = randomIndividual();
-	printIndividual(v1);
 	int *v2 = randomIndividual();
-	printIndividual(v2);
 
 	int *vc = crossover_PB(v1,v2);
+	printIndividual(vc);
+	checkConsistence(vc);
+	mutation_I(vc);
+	checkConsistence(vc);
 	printIndividual(vc);
 	
 	return 0;

@@ -31,13 +31,10 @@ int cost(int* individu, int costTable[][NUM_CITIES]){
 	for(i=0; i<NUM_GENES; i++){
 		d = individu[i];
 		c+=costTable[s][d];
-		printf("%d\n", costTable[s][d]);
 		s = d;
 	}
 	d = BARCELONA;
-	printf("%d\n", costTable[s][d]);
 	c+=costTable[s][d];
-	printf("%d\n", c);
 	return c;
 	
 }
@@ -57,7 +54,6 @@ void mutation_I(int *indi){
 	int i;
 	int start = rand()%NUM_GENES;
 	int end = rand()%(NUM_GENES-start)+start;
-	printf("%d, %d\n", start, end);
 	int aux = 0;
 	for(i=0; i<(end-start)/2; i++){
 		aux = indi[start+i];
@@ -127,55 +123,79 @@ int checkConsistence(int* indi){
 	return 1;
 }
 
+void printNames(int* indi, char names[][MAX_LEN_NAME]){
+
+	int i;
+	printf("Barcelona, ");
+	for(i=0; i<NUM_GENES; i++){
+		printf("%s, ", names[indi[i]]);
+	}
+	printf("Barcelona \n");
+}
+
 //TODO maybe there is a better way to do this
 int* GA(int costTable[][NUM_CITIES]){
+
 	int** population = generatePopulation();
 	int** newPopu;
 	
 	newPopu = (int**) malloc(sizeof(int*)*POPULATION_SIZE);
+	int i, j;
+	int* min1;
+	int* min2;
+	int minCost1, minCost2;
+	for(j=0; j<NUM_GENERATIONS; j++){
 
-	int minCost, actCost=0;
-	int i;
 
-	minCost1 = cost(population[0], costTable);
-	minCost2 = cost(population[1], costTable);
-	int* min1 = population[0];
-	int* min2 = population[1];
+		int actCost=0;
 
-	if (minCost2 < minCost1){
-		int aux = minCost1;
-		minCost1 = minCost2;
-		minCost2 = minCost1;
+		minCost1 = cost(population[0], costTable);
+		minCost2 = cost(population[1], costTable);
+		min1 = population[0];
+		min2 = population[1];
 
-		int* aux2 = min1;
-		min1 = min2;
-		min2 = aux2;
-	}
 
-	for(i=2; i<POPULATION_SIZE; i++){
-		actCost = cost(population[i], costTable);
-		if(actCost < minCost1){
+		if (minCost2 < minCost1){
+			int aux = minCost1;
+			minCost1 = minCost2;
 			minCost2 = minCost1;
-			min2 = min1;
-			minCost1 = actCost;
-			min1 = population[i];
-		}
-		else if (actCost < minCost2){
-			minCost2 = actCost;
-			min2 = population[i];
-		}
-	}
-	newPopu[0] = min1;
-	newPopu[1] = min2;
-	newPopu[2] = crossover_PB(min1, population[i]);
-	for(i=3; i<(POPULATION_SIZE-3) / 2 +1; i++){
-		newPopu[i] = crossover_PB(min1, population[i]);
-	}
-	for(i=(POPULATION_SIZE-3) / 2 +1; i<POPULATION_SIZE; i++){
-		newPopu[i] = crossover_PB(min1, population[i]);
-	}
 
-	for(i=2; i<POPULATION_SIZE; i++){
-		mutation_I(newPopu[i]);
+			int* aux2 = min1;
+			min1 = min2;
+			min2 = aux2;
+		}
+
+		for(i=2; i<POPULATION_SIZE; i++){
+			actCost = cost(population[i], costTable);
+			if(actCost < minCost1){
+				minCost2 = minCost1;
+				min2 = min1;
+				minCost1 = actCost;
+				min1 = population[i];
+			}
+			else if (actCost < minCost2){
+				minCost2 = actCost;
+				min2 = population[i];
+			}
+		}
+		newPopu[0] = min1;
+		newPopu[1] = min2;
+		newPopu[2] = crossover_PB(min1, min2);
+		for(i=3; i<(POPULATION_SIZE-3) / 2 +1; i++){
+			newPopu[i] = crossover_PB(min1, population[i]);
+		}
+
+		for(i=(POPULATION_SIZE-3) / 2 +1; i<POPULATION_SIZE; i++){
+			newPopu[i] = crossover_PB(min1, population[i]);
+		}
+		for(i=2; i<POPULATION_SIZE; i++){
+			mutation_I(newPopu[i]);
+		}
+		int** aux = population;
+		population = newPopu;
+		newPopu  = aux;
+		printf("%d\n", cost(min1, costTable));
 	}
+	return min1;
+
 }

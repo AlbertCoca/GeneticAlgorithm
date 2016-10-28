@@ -196,8 +196,9 @@ int* crossover_H(int* parent1, int* parent2, int costTable[][NUM_CITIES]){
 				if(freePos[i] != -1) child[j] = freePos[i];
 			}
 		}
-		printIndividual(child);
+		//printIndividual(child);
 	}
+	return child;
 }
 
 
@@ -283,13 +284,13 @@ int* GA(int costTable[][NUM_CITIES]){
 		}
 		newPopu[0] = min1;
 		newPopu[1] = min2;
-		newPopu[2] = crossover_OX(min1, min2);
+		newPopu[2] = crossover_H(min1, min2, costTable);
 		for(i=3; i<(POPULATION_SIZE-3) / 2 +1; i++){
-			newPopu[i] = crossover_OX(min1, population[i]);
+			newPopu[i] = crossover_H(min1, population[i], costTable);
 		}
 
 		for(i=(POPULATION_SIZE-3) / 2 +1; i<POPULATION_SIZE; i++){
-			newPopu[i] = crossover_OX(min1, population[i]);
+			newPopu[i] = crossover_H(min1, population[i], costTable);
 		}
 		for(i=2; i<POPULATION_SIZE; i++){
 			mutation_I(newPopu[i]);

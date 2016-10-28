@@ -5,6 +5,8 @@
 void getNames(char *line,  char names[][MAX_LEN_NAME]);
 void getValues(FILE *fp, int costTable[][NUM_CITIES]);
 
+typedef int* (*crossover)(int*, int*);
+
 int findIndexOfChar(char* s, char c, int n){
 	int i, offset = -1;
 	for(i=0; i<n; i++){
@@ -15,7 +17,26 @@ int findIndexOfChar(char* s, char c, int n){
 	return offset;
 }
 
-int main(){
+int main(int argc, char const *argv[])
+{
+	if(argc < 2){
+		printf("Please specify Options\n");
+		abort();
+	}
+	switch (argv[1][0])
+	{
+		case 'B':
+			break;
+		case 'O':
+			break;
+		case 'H':
+			break;
+		default:
+			printf("You must specify the crossover Type: \n");
+			printf("P\t For Pointed Based crossover\n");
+			printf("O\t For Order crossover\n");
+			printf("H\t For Heuristic crossover\n");
+	}
 	srand(12);
 	int costTable[NUM_CITIES][NUM_CITIES] = {0};
 	char names [NUM_CITIES][MAX_LEN_NAME];
@@ -35,7 +56,8 @@ int main(){
 	printIndividual(v2);
 	int *cv = crossover_H(v1, v2, costTable);
 
-	//int* best = GA(costTable);
+	checkConsistence(cv);
+	int* best = GA(costTable);
 	//printf("%d\n", cost(best, costTable));
 	//printIndividual(best);
 	//printNames(best, names);

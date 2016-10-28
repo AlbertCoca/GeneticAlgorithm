@@ -12,12 +12,23 @@
 #define NUM_CITIES 38
 #define MAX_LEN_NAME 20
 
+//Initializing Functions
 int* randomIndividual();
-void printIndividual(int* indi);
-int* crossover_PB(int* parent1, int* parent2);
 int** generatePopulation();
-int cost(int* individu, int costTable[][NUM_CITIES]);
-void mutation_I(int *indi);
-int* GA(int costTable[][NUM_CITIES]);
+
+//Util Functions
+void printIndividual(int* indi);
 int checkConsistence(int* indi);
 void printNames(int* indi, char names[][MAX_LEN_NAME]);
+
+//Algorithm Functions
+int cost(int* individu, int costTable[][NUM_CITIES]);
+int* GA(int costTable[][NUM_CITIES]);
+
+//CrossOver Functions
+int* crossover_OX(int* parent1, int* parent2);
+int* crossover_PB(int* parent1, int* parent2);
+int* crossover_H(int* parent1, int* parent2, int costTable[][NUM_CITIES]);
+
+//Mutation Functions
+void mutation_I(int *indi);

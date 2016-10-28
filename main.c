@@ -16,7 +16,7 @@ int findIndexOfChar(char* s, char c, int n){
 }
 
 int main(){
-	srand(time(NULL));
+	srand(12);
 	int costTable[NUM_CITIES][NUM_CITIES] = {0};
 	char names [NUM_CITIES][MAX_LEN_NAME];
 	char line[MAX_LINE_LEN];
@@ -30,11 +30,12 @@ int main(){
 	getValues(fp, costTable);
 
 	int *v1 = randomIndividual();
+	printIndividual(v1);
 	int *v2 = randomIndividual();
+	printIndividual(v2);
+	int *cv = crossover_H(v1, v2, costTable);
 
-	int *vc = crossover_PB(v1,v2);
-	mutation_I(vc);
-	int* best = GA(costTable);
+	//int* best = GA(costTable);
 	//printf("%d\n", cost(best, costTable));
 	//printIndividual(best);
 	//printNames(best, names);

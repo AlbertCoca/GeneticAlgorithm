@@ -62,10 +62,20 @@ void mutation_I(int *indi){
 	}
 }
 
+//Exange Mutation
+void mutation_E(int *indi){
+	int pos1 = rand()%NUM_GENES;
+	int pos2 = rand()%NUM_GENES;
+	int aux = 0;
 
+	aux = indi[pos1];
+	indi[pos1] = indi[pos2];
+	indi[pos2] = aux;
+
+}
 
 //Position Based Crossover
-int* crossover_OX(int* parent1, int* parent2){
+int* crossover_OX(int* parent1, int* parent2, int costTable[][NUM_CITIES]){
 	int i, j;
 	int *child = (int*)malloc(sizeof(int)*NUM_GENES);
 	int *p2 = (int*)malloc(sizeof(int)*NUM_GENES);
@@ -99,7 +109,7 @@ int* crossover_OX(int* parent1, int* parent2){
 		
 }
 
-int* crossover_PB(int* parent1, int* parent2){
+int* crossover_PB(int* parent1, int* parent2, int costTable[][NUM_CITIES]){
 	int i, j;
 	int *child = (int*)malloc(sizeof(int)*NUM_GENES);
 	int *p2 = (int*)malloc(sizeof(int)*NUM_GENES);
@@ -110,7 +120,7 @@ int* crossover_PB(int* parent1, int* parent2){
 
 	for(i=0; i<num_pos; i++){
 		int rPos = rand()%(NUM_GENES);
-		printf("%d,", rPos);
+		//printf("%d,", rPos);
 		child[rPos] = parent1[rPos];
 		for(j=0; j<NUM_GENES; j++){
 			if(p2[j] == child[rPos]){
@@ -119,8 +129,8 @@ int* crossover_PB(int* parent1, int* parent2){
 			}
 		}
 	}
-	printf("\n");
-	printIndividual(child);
+	//printf("\n");
+	//printIndividual(child);
 
 	for(i=0;i<NUM_GENES; i++){
 		if(p2[i]!=-1){
@@ -238,7 +248,7 @@ void printNames(int* indi, char names[][MAX_LEN_NAME]){
 }
 
 //TODO maybe there is a better way to do this
-int* GA(int costTable[][NUM_CITIES]){
+int* GA(int costTable[][NUM_CITIES], crossover cross, mutation mut){
 
 	int** population = generatePopulation();
 	int** newPopu;
@@ -284,16 +294,16 @@ int* GA(int costTable[][NUM_CITIES]){
 		}
 		newPopu[0] = min1;
 		newPopu[1] = min2;
-		newPopu[2] = crossover_H(min1, min2, costTable);
+		newPopu[2] = cross(min1, min2, costTable);
 		for(i=3; i<(POPULATION_SIZE-3) / 2 +1; i++){
-			newPopu[i] = crossover_H(min1, population[i], costTable);
+			newPopu[i] = cross(min1, population[i], costTable);
 		}
 
 		for(i=(POPULATION_SIZE-3) / 2 +1; i<POPULATION_SIZE; i++){
-			newPopu[i] = crossover_H(min1, population[i], costTable);
+			newPopu[i] = cross(min1, population[i], costTable);
 		}
 		for(i=2; i<POPULATION_SIZE; i++){
-			mutation_I(newPopu[i]);
+			mut(newPopu[i]);
 		}
 		int** aux = population;
 		population = newPopu;

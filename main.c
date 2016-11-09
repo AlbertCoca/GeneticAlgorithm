@@ -5,8 +5,6 @@
 void getNames(char *line,  char names[][MAX_LEN_NAME]);
 void getValues(FILE *fp, int costTable[][NUM_CITIES]);
 
-typedef int* (*crossover)(int*, int*);
-
 int findIndexOfChar(char* s, char c, int n){
 	int i, offset = -1;
 	for(i=0; i<n; i++){
@@ -17,27 +15,56 @@ int findIndexOfChar(char* s, char c, int n){
 	return offset;
 }
 
+void help(){
+	printf("You must specify the crossover and the Mutation Type: \n");
+	printf("First parameter must contain the crossover Type:\n");
+	printf("-B\t For Pointed Based crossover\n");
+	printf("-O\t For Order crossover\n");
+	printf("-H\t For Heuristic crossover\n");
+	printf("Second parameter must contain the mutation Type:\n");
+	printf("-E\t For Exange crossover\n");
+	printf("-I\t For Inverse crossover\n");
+	printf("\nExample: ./ga B I\n");
+}
+
 int main(int argc, char const *argv[])
 {
-	if(argc < 2){
-		printf("Please specify Options\n");
+	crossover cross;
+	mutation mut;
+	if(argc < 3){
+		help();
 		abort();
 	}
 	switch (argv[1][0])
 	{
 		case 'B':
+			cross = &crossover_PB;
 			break;
 		case 'O':
+			cross = &crossover_OX;
 			break;
 		case 'H':
+			cross = &crossover_H;
 			break;
 		default:
-			printf("You must specify the crossover Type: \n");
-			printf("P\t For Pointed Based crossover\n");
-			printf("O\t For Order crossover\n");
-			printf("H\t For Heuristic crossover\n");
+			help();
+			abort();
+			break;
 	}
-	srand(12);
+	switch (argv[2][0])
+	{
+		case 'E':
+			mut = &mutation_E;
+			break;
+		case 'I':
+			mut = &mutation_I;
+			break;
+		default:
+			help();
+			abort();
+			break;
+	}
+	srand(time(NULL));
 	int costTable[NUM_CITIES][NUM_CITIES] = {0};
 	char names [NUM_CITIES][MAX_LEN_NAME];
 	char line[MAX_LINE_LEN];
@@ -57,7 +84,7 @@ int main(int argc, char const *argv[])
 	int *cv = crossover_H(v1, v2, costTable);
 
 	checkConsistence(cv);
-	int* best = GA(costTable);
+	int* best = GA(costTable, cross, mut);
 	//printf("%d\n", cost(best, costTable));
 	//printIndividual(best);
 	//printNames(best, names);

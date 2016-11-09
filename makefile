@@ -8,3 +8,4 @@ genetic.o: genetic.c
 
 clean:
 	rm *.o
+	rm ga

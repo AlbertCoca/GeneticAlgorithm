@@ -64,13 +64,16 @@ void mutation_I(int *indi){
 
 //Exange Mutation
 void mutation_E(int *indi){
-	int pos1 = rand()%NUM_GENES;
-	int pos2 = rand()%NUM_GENES;
-	int aux = 0;
+	int i;
 
-	aux = indi[pos1];
-	indi[pos1] = indi[pos2];
-	indi[pos2] = aux;
+	for(i=0; i<NUM_E_MUT; i++){
+		int pos1 = rand()%NUM_GENES;
+		int pos2 = rand()%NUM_GENES;
+		int aux = 0;
+		aux = indi[pos1];
+		indi[pos1] = indi[pos2];
+		indi[pos2] = aux;
+	}
 
 }
 
@@ -114,13 +117,13 @@ int* crossover_PB(int* parent1, int* parent2, int costTable[][NUM_CITIES]){
 	int *child = (int*)malloc(sizeof(int)*NUM_GENES);
 	int *p2 = (int*)malloc(sizeof(int)*NUM_GENES);
 	memcpy(p2, parent2, sizeof(int)*NUM_GENES);
+
 	for(i=0; i<NUM_GENES; i++)child[i] = -1;
 	
 	int num_pos = rand()%(NUM_GENES)-1;
 
 	for(i=0; i<num_pos; i++){
 		int rPos = rand()%(NUM_GENES);
-		//printf("%d,", rPos);
 		child[rPos] = parent1[rPos];
 		for(j=0; j<NUM_GENES; j++){
 			if(p2[j] == child[rPos]){
@@ -129,8 +132,6 @@ int* crossover_PB(int* parent1, int* parent2, int costTable[][NUM_CITIES]){
 			}
 		}
 	}
-	//printf("\n");
-	//printIndividual(child);
 
 	for(i=0;i<NUM_GENES; i++){
 		if(p2[i]!=-1){
@@ -181,12 +182,6 @@ int* crossover_H(int* parent1, int* parent2, int costTable[][NUM_CITIES]){
 			p2[i] = parent2[(p2cp+i)%NUM_GENES];
 		}
 		
-		//printf("%d \n", p1cp);
-		//printf("%d \n", p2cp);
-		//printf("%d \n", sCity);
-		//printIndividual(p1);
-		//printIndividual(p2);
-
 		int p1Valid = 1;
 		int p2Valid = 1;
 
@@ -209,6 +204,9 @@ int* crossover_H(int* parent1, int* parent2, int costTable[][NUM_CITIES]){
 		//printIndividual(child);
 	}
 	return child;
+	free(p1);
+	free(p2);
+	free(freePos);
 }
 
 
@@ -247,7 +245,6 @@ void printNames(int* indi, char names[][MAX_LEN_NAME]){
 	printf("Barcelona \n");
 }
 
-//TODO maybe there is a better way to do this
 int* GA(int costTable[][NUM_CITIES], crossover cross, mutation mut){
 
 	int** population = generatePopulation();
@@ -295,13 +292,16 @@ int* GA(int costTable[][NUM_CITIES], crossover cross, mutation mut){
 		newPopu[0] = min1;
 		newPopu[1] = min2;
 		newPopu[2] = cross(min1, min2, costTable);
+
+		//#pragma omp parallel for schedule(dynamic)
 		for(i=3; i<(POPULATION_SIZE-3) / 2 +1; i++){
 			newPopu[i] = cross(min1, population[i], costTable);
 		}
-
+		//#pragma omp parallel for schedule(dynamic)
 		for(i=(POPULATION_SIZE-3) / 2 +1; i<POPULATION_SIZE; i++){
 			newPopu[i] = cross(min1, population[i], costTable);
 		}
+		//#pragma omp parallel for schedule(dynamic)
 		for(i=2; i<POPULATION_SIZE; i++){
 			mut(newPopu[i]);
 		}
@@ -310,6 +310,7 @@ int* GA(int costTable[][NUM_CITIES], crossover cross, mutation mut){
 		newPopu  = aux;
 		printf("%d\n", cost(min1, costTable));
 	}
+	free(newPopu);
 	return min1;
 
 }

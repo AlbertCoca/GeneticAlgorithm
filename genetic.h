@@ -7,10 +7,11 @@
 #define NUM_CITIES 38
 #define BARCELONA 3
 #define POPULATION_SIZE 100
-#define NUM_GENERATIONS 10000
+#define NUM_GENERATIONS 10000	
 #define MAX_LINE_LEN 500
 #define NUM_CITIES 38
 #define MAX_LEN_NAME 20
+#define NUM_E_MUT 1	
 
 typedef int* (*crossover)(int*, int*, int costTable[][NUM_CITIES]);
 typedef void (*mutation)(int*);

@@ -20,7 +20,7 @@ void help(){
 	printf("First parameter must contain the crossover Type:\n");
 	printf("-B\t For Pointed Based crossover\n");
 	printf("-O\t For Order crossover\n");
-	printf("-H\t For Heuristic crossover\n");
+	//printf("-H\t For Heuristic crossover\n");
 	printf("Second parameter must contain the mutation Type:\n");
 	printf("-E\t For Exange crossover\n");
 	printf("-I\t For Inverse crossover\n");
@@ -43,9 +43,9 @@ int main(int argc, char const *argv[])
 		case 'O':
 			cross = &crossover_OX;
 			break;
-		case 'H':
-			cross = &crossover_H;
-			break;
+		//case 'H':
+		//	cross = &crossover_H;
+		//	break;
 		default:
 			help();
 			abort();
@@ -78,16 +78,17 @@ int main(int argc, char const *argv[])
 	getValues(fp, costTable);
 
 	int *v1 = randomIndividual();
-	printIndividual(v1);
+	//printIndividual(v1);
 	int *v2 = randomIndividual();
-	printIndividual(v2);
+	//printIndividual(v2);
 	int *cv = crossover_H(v1, v2, costTable);
 
-	checkConsistence(cv);
+	//checkConsistence(cv);
 	int* best = GA(costTable, cross, mut);
 	//printf("%d\n", cost(best, costTable));
 	//printIndividual(best);
-	//printNames(best, names);
+
+	printNames(best, names);
 	
 	return 0;
 }
